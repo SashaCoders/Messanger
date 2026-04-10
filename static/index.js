@@ -1,4 +1,7 @@
 const  socket = io();
+const db = require("./database");
+let message = db.getMessage();
+let add = db.addMessage("hello", 2);
 form.addEventListener('submit', function (e){
     e.preventDefault();
 if(input.value){
