@@ -41,6 +41,18 @@ dbWrapper
         addMessage : async (msg, userId) => {
             await db.all(`insert into message(content, author) values(msg,userId)`
                 [msg, userId])
+        },
+        isUserExist: async (login) => {
+            const candidate = await  db.all(`select * from user where login = ?`, [
+                login,
+            ]);
+            return !!candidate.length;
+        },
+        addUser: async (user) => {
+            await db.run(`insert into user (login, password) values (?, ?)`, [
+                user.login,
+                user.password,
+            ]);
         }
     };
 });
