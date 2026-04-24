@@ -1,4 +1,6 @@
 const fs = require('fs');
+const crypte = require('crypto');
+
 const dbFile = "./chat.db";
 const exist = fs.existsSync(dbFile);
 const sqlite3 = require("sqlite3").verbose();
@@ -53,6 +55,22 @@ dbWrapper
                 user.login,
                 user.password,
             ]);
-        }
+        },
+        getAuthToken: async (user) => {
+            const candidate = await db.all(`select * from user where login = ?`,[user.login,]);
+            if (!candidate.length){
+                throw 'Wrong login';
+            }
+            if (candidate[0].password !== user.password){
+                throw 'Wrong password';
+            }
+            return (
+                candidate[0].user_id +
+                '.' +
+                candidate[0].login +
+                '.' +
+                crypto.randomBytes(20).toString('hex')
+            );
+        },
     };
 });
