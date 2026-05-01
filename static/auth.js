@@ -1,5 +1,6 @@
 const registerForm = document.getElementById('register-form');
-registerForm.addEventListener('submit', (event) => {
+const loginForm = document.getElementById('login-form');
+registerForm?.addEventListener('submit', (event) => {
     event.preventDefault();
     const {login, password, passwordRepeat} = registerForm;
     if (password.value !== passwordRepeat.value){
@@ -14,7 +15,7 @@ registerForm.addEventListener('submit', (event) => {
     xhr.send(user);
     xhr.onload = () => alert(xhr.response);
 });
-loginorm?.addEventListener('submit', (event) => {
+loginForm?.addEventListener('submit', (event) => {
     event.preventDefault();
     const {login, password} = loginForm;
     const user = JSON.stringify({
