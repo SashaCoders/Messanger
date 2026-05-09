@@ -109,7 +109,7 @@ display: flex;
     background: #4b6da1;
 }
 
-.register-form .register-form__conteiner{
+.register-form .register-form__container{
     display: flex;
     flex-direction: column;
     border-radius: 20px;
@@ -118,7 +118,9 @@ display: flex;
 }
 
 
-
+.register-form__title{
+    color: white;
+}
 
 .register-form__label{
     color: whitesmoke;

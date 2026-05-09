@@ -6,15 +6,11 @@ const cookie = require('cookie');
 
 const validAuthTokens = [];
 
-const indexHtmlFile = fs.readFileSync(
-    path.join(__dirname, 'static', 'index.html'),
-);
+const indexHtmlFile = fs.readFileSync(path.join(__dirname, 'static', 'index.html'),);
 const scriptFile = fs.readFileSync(path.join(__dirname, 'static', 'index.js'));
 const authFile = fs.readFileSync(path.join(__dirname, 'static', 'auth.js'));
 const styleFile = fs.readFileSync(path.join(__dirname, 'static', 'style.css'));
-const registerFile = fs.readFileSync(
-    path.join(__dirname, 'static', 'register.html'),
-);
+const registerFile = fs.readFileSync(path.join(__dirname, 'static', 'register.html'),);
 const loginFile = fs.readFileSync(path.join(__dirname, 'static', 'login.html'));
 
 const server = http.createServer((req, res) => {
@@ -48,7 +44,7 @@ function guarded(req, res) {
     const credentionals = getCredentionals(req);
 
     if (!credentionals) {
-        res.writeHead(302, { Location: '/register' }); // редірект
+        res.writeHead(302, {Location: '/register'}); // редірект
         return res.end(); // ⬅️ КЛЮЧ
     }
 
@@ -71,7 +67,7 @@ function getCredentionals(req) {
     if (!token || !validAuthTokens.includes(token)) return null;
     const [user_id, login] = token.split('.');
     if (!user_id || !login) return null;
-    return { user_id, login };
+    return {user_id, login};
 }
 
 function registerUser(req, res) {
@@ -118,16 +114,16 @@ function login(req, res) {
 
 server.listen(3000);
 
-const { Server } = require('socket.io');
+const {Server} = require('socket.io');
 const io = new Server(server);
 
 io.use((socket, next) => {
     const cookie = socket.handshake.auth.cookie;
     const credentionals = getCredentionals(cookie);
-    if (!credentionals){
+    if (!credentionals) {
         next(new Error("no auth"));
     }
-socket.credentionals = credentionals;
+    socket.credentionals = credentionals;
     next();
 });
 
@@ -136,9 +132,8 @@ io.on('connection', async (socket) => {
     console.log('a user connected. id - ' + socket.id);
 
     let userNickname = socket.credentionals?.login;
-    let userId = socket.credentionals?.user_id
+    let userId = socket.credentionals?.user_id;
     let messages = await db.getMessages();
-
 
 
     socket.emit('all_messages', messages);

@@ -15,28 +15,29 @@ dbWrapper
     })
     .then(async (dBase) => {
         db = dBase;
-
         // Використвуємо try-catch у разі якщо виникнуть помилки
         try {
             // Перевіряємо чи існує уже файл бази даних
             if (!exists) {
                 // Якщо не існує то створюємо таблиці
                 await db.run(
-                    `CREATE TABLE user(
-                              user_id INTEGER PRIMARY KEY AUTOINCREMENT,
-                              login TEXT,
-                              password TEXT,
-                              salt TEXT
-           );`,
+                    `CREATE TABLE user
+                     (
+                         user_id  INTEGER PRIMARY KEY AUTOINCREMENT,
+                         login    TEXT,
+                         password TEXT,
+                         salt     TEXT
+                     );`,
                 );
 
                 await db.run(
-                    `CREATE TABLE message(
-                                 msg_id INTEGER PRIMARY KEY AUTOINCREMENT,
-                                 content TEXT,
-                                 autor INTEGER,
-                                 FOREIGN KEY(autor) REFERENCES user(user_id)
-           );`,
+                    `CREATE TABLE message
+                     (
+                         msg_id  INTEGER PRIMARY KEY AUTOINCREMENT,
+                         content TEXT,
+                         autor   INTEGER,
+                         FOREIGN KEY (autor) REFERENCES user (user_id)
+                     );`,
                 );
             } else {
                 console.log(await db.all('SELECT * from user'));
@@ -50,21 +51,25 @@ module.exports = {
     getMessages: async () => {
         try {
             return await db.all(
-                `SELECT msg_id, content, login, user_id from message
-                                                       JOIN user ON message.autor = user.user_id`,
+                `SELECT msg_id, content, login, user_id
+                 from message
+                          JOIN user ON message.autor = user.user_id`,
             );
         } catch (dbError) {
             console.error(dbError);
         }
     },
     addMessage: async (msg, userId) => {
-        await db.run(`INSERT INTO message (content, autor) VALUES (?, ?)`, [
+        await db.run(`INSERT INTO message (content, autor)
+                      VALUES (?, ?)`, [
             msg,
             userId,
         ]);
     },
     isUserExist: async (login) => {
-        const candidate = await db.all(`SELECT * FROM user WHERE login = ?`, [
+        const candidate = await db.all(`SELECT *
+                                        FROM user
+                                        WHERE login = ?`, [
             login,
         ]);
         return !!candidate.length;
@@ -75,21 +80,24 @@ module.exports = {
         const password = crypto
             .pbkdf2Sync(user.password, salt, 1000, 64, `sha512`)
             .toString(`hex`);
-        await db.run(`INSERT INTO user (login, password, salt) VALUES (?, ?, ?)`, [
+        await db.run(`INSERT INTO user (login, password, salt)
+                      VALUES (?, ?, ?)`, [
             user.login,
             password,
             salt,
         ]);
     },
     getAuthToken: async (user) => {
-        const candidate = await db.all(`SELECT * FROM user WHERE login = ?`, [
+        const candidate = await db.all(`SELECT *
+                                        FROM user
+                                        WHERE login = ?`, [
             user.login,
         ]);
         if (!candidate.length) {
             throw 'Wrong login';
         }
         // Такий тип оголошення змінних називається декомпозиція
-        const { user_id, login, password, salt } = candidate[0];
+        const {user_id, login, password, salt} = candidate[0];
         const hash = crypto
             .pbkdf2Sync(user.password, salt, 1000, 64, `sha512`)
             .toString(`hex`);

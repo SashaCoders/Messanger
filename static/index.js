@@ -1,6 +1,4 @@
-const socket = io({
-    auth: {cookie: document.cookie}
-});
+const socket = io({auth: {cookie: document.cookie}});
 const messages = document.getElementById('messages');
 const form = document.getElementById('form');
 const input = document.getElementById('input');
